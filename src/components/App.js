@@ -3,25 +3,51 @@ import CategoryFilter from './CategoryFilter';
 import NewTaskForm from './NewTaskForm';
 import TaskList from './TaskList';
 import { v4 as uuidv4 } from 'uuid';
-
 import { CATEGORIES, TASKS } from '../data';
-// console.log("Here's the data you're working with");
-// console.log({ CATEGORIES, TASKS });
 
 function App() {
+  let categoryArray = CATEGORIES;
   let taskArray = TASKS.map((task) => {
     return { ...task, id: uuidv4() };
   });
 
   const [tasks, setTasks] = useState(taskArray);
-  console.log(tasks);
+  const [categorySelect, setCategorySelect] = useState('All');
+  const [newTask, setNewTask] = useState({
+    text: '',
+    category: 'All',
+  });
+
+  function handleNewTask(e) {
+    e.preventDefault();
+    let taskWithId = { ...newTask, id: uuidv4() };
+    setTasks([...tasks, taskWithId]);
+    setNewTask({ text: '', category: 'All' });
+  }
+
+  function handleCategorySelect(category) {
+    setCategorySelect(category);
+  }
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter />
-      <NewTaskForm />
-      {/* <TaskList tasks={tasks} setTasks={setTasks} /> */}
+      <CategoryFilter
+        categorySelect={categorySelect}
+        categoryArray={categoryArray}
+        handleCategorySelect={handleCategorySelect}
+      />
+      <NewTaskForm
+        categoryArray={categoryArray}
+        newTask={newTask}
+        setNewTask={setNewTask}
+        handleNewTask={handleNewTask}
+      />
+      <TaskList
+        tasks={tasks}
+        setTasks={setTasks}
+        categorySelect={categorySelect}
+      />
     </div>
   );
 }
